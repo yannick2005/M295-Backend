@@ -1,5 +1,12 @@
 'use strict'
-let num = 6;
-let double = num * 2;
 
-console.log("The result is:", double)
+function double(number, callback){
+    let result = number * 2;
+    callback(result);
+}
+
+function printResult(result){
+    console.log(result);
+}
+
+double(7, printResult)
