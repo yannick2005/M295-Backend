@@ -1,9 +1,13 @@
-'use strict'
+'use strict';
 
 const express = require('express');
-const fs = require('fs');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
+
+const FormHelper = bodyParser.urlencoded();
+
+let createdName = ''; // Variable to store the created name
 
 app.get('/now', (req, res) => {
     let time = new Date().toLocaleTimeString('de-CH', { timeZone: req.query.q });
@@ -12,13 +16,13 @@ app.get('/now', (req, res) => {
 
 app.post('/name', (req, res) => {
     const { firstName, lastName } = req.query;
-    const name = createName(firstName, lastName);
-    res.send(name);
+    createdName = createName(firstName, lastName); // Update the createdName variable
+    res.send(createdName);
 });
 
-app.get("/name", (req, res, name) => {
-    res.send(name)
-})
+app.get('/name', (req, res) => {
+    res.send(createdName); // Send the stored createdName
+});
 
 function createName(firstName, lastName) {
     // Logic to create a name using the provided firstName and lastName
@@ -26,12 +30,8 @@ function createName(firstName, lastName) {
     return `${firstName} ${lastName}`;
 }
 
-createName("Daniel", "Boulter")
-
-
-
-
+createName('Daniel', 'Boulter');
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    console.log(`Example app listening on port ${port}`);
+});
