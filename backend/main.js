@@ -1,8 +1,11 @@
 'use strict'
 
+const bodyParser = require("body-parser")
 const express = require("express")
 const app = express()
 const port = 3000
+
+app.use(bodyParser.json())
 
 const books = [
     { isbn: 1, title: "Harry Potter", year: 9812, author: "A kid" },
@@ -30,8 +33,14 @@ app.get("/books/:isbn", (req, res) => {
 
 app.post("/books", (req, res) => {
     const newBook = req.body;
-    books.push(newBook);
-    res.status(201).json(newBook);
+    console.log(newBook)
+
+    if (newBook){
+        books.push(newBook);
+        res.status(201).json(newBook);
+    } else {
+        res.send("Something went wrong")
+    }
 });
 
 app.put("/books/:isbn", (req, res) => {
