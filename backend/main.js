@@ -7,7 +7,7 @@ const port = 3000
 
 app.use(bodyParser.json())
 
-const books = [
+let books = [
     { isbn: 1, title: "Harry Potter", year: 9812, author: "A kid" },
     { isbn: 2, title: "Anne Frank", year: 1234, author: "Anne Frank" },
     { isbn: 3, title: "Casablanca", year: 123, author: "Some guy out of Morocco" },
