@@ -56,27 +56,38 @@ app.put("/books/:isbn", (req, res) => {
     } else {
         res.status(404).send("Book not found.");
     }
+
+    // const isbn = req.params.isbn;
+    // const bookIndex = books.findIndex((b) => b.isbn === isbn)
+    // const bookToUpdate = request.body
+
+    // if (bookIndex < 0){
+    //     return res.sendStatus(404)
+    // } else if (isValid(bookToUpdate)){
+    //     return res.sendStatus(422)
+    // }
+
 });
 
 app.delete("/books/:isbn", (req, res) => {
-    const isbn = req.params.isbn;
-    const bookIndex = books.findIndex(b => b.isbn == isbn)
-
-    if(bookIndex < 0){
-        return res.sendStatus(404)
-    }
-    books.splice(bookIndex, 1)
-    res.sendStatus(204)
-
     // const isbn = req.params.isbn;
-    // const bookIndex = books.findIndex((book) => book.isbn === parseInt(isbn));
+    // const bookIndex = books.findIndex(b => b.isbn == isbn)
 
-    // if (bookIndex !== -1) {
-    //     const deletedBook = books.splice(bookIndex, 1);
-    //     res.json(deletedBook[0]);
-    // } else {
-    //     res.status(404).send("Book not found.");
+    // if(bookIndex < 0){
+    //     return res.sendStatus(404)
     // }
+    // books.splice(bookIndex, 1)
+    // res.sendStatus(204)
+
+    const isbn = req.params.isbn;
+    const bookIndex = books.findIndex((book) => book.isbn === parseInt(isbn));
+
+    if (bookIndex !== -1) {
+        const deletedBook = books.splice(bookIndex, 1);
+        res.json(deletedBook[0]);
+    } else {
+        res.status(404).send("Book not found.");
+    }
 });
 
 app.listen(port, () => {
