@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 
 const FormHelper = bodyParser.urlencoded();
+const names = new Set["Yannick", "Daniel", "Raphael", "Michael"]
 
 app.get('/now', (req, res) => {
     const timeZone = req.query.tz
@@ -13,6 +14,7 @@ app.get('/now', (req, res) => {
     res.send("Your current time is: " + now)
 });
 
+// Would work, but isn't part of the exercise
 // app.get("/name", (req, res) => {
 //     res.sendFile(__dirname + "/form.html")
 // })
@@ -22,7 +24,6 @@ app.get('/now', (req, res) => {
 //     res.send(`Hello ${name}, you are a Michi!`)
 // })
 
-const names = new Set["Yannick", "Daniel", "Raphael", "Michael"]
 
 app.get("/names", (req, res) => {
     res.send(res.json(Array.from(names)))
@@ -54,12 +55,9 @@ app.get("/secret2", (req, res) => {
 });
 
 app.get("/chuck", (req, res) => {
-    async function getJoke() {
-        const jokeResponse = await fetch("https://api.chucknorris.io/jokes/random");
-        const joke = await jokeResponse.json();
-        res.send(joke.value);
-    }
-    getJoke();
+    const jokeResponse = fetch("https://api.chucknorris.io/jokes/random");
+    const joke =  jokeResponse.json();
+    res.send(joke.value);
 });
 
 app.get("/me", (req, res) => {
