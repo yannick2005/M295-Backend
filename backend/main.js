@@ -1,11 +1,11 @@
 'use strict'
 
-const bodyParser = require("body-parser")
+// const bodyParser = require("body-parser")
 const express = require("express")
 const app = express()
 const port = 3000
 
-app.use(bodyParser.json())
+app.use(express.json())
 
 let books = [
     { isbn: 1, title: "Harry Potter", year: 9812, author: "A kid" },
