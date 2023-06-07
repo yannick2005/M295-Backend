@@ -33,14 +33,17 @@ app.get("/books/:isbn", (req, res) => {
 
 app.post("/books", (req, res) => {
     const newBook = req.body;
-    console.log(newBook)
 
-    if (newBook){
+    if (isValid(newBook)){
         books.push(newBook);
         res.status(201).json(newBook);
     } else {
-        res.send("Something went wrong")
+        res.status(301).send("Something went wrong")
     }
+
+    // function isValid(book){
+    //     return book.isbn =  
+    // }
 });
 
 app.put("/books/:isbn", (req, res) => {
@@ -57,14 +60,23 @@ app.put("/books/:isbn", (req, res) => {
 
 app.delete("/books/:isbn", (req, res) => {
     const isbn = req.params.isbn;
-    const bookIndex = books.findIndex((book) => book.isbn === parseInt(isbn));
+    const bookIndex = books.findIndex(b => b.isbn == isbn)
 
-    if (bookIndex !== -1) {
-        const deletedBook = books.splice(bookIndex, 1);
-        res.json(deletedBook[0]);
-    } else {
-        res.status(404).send("Book not found.");
+    if(bookIndex < 0){
+        return res.sendStatus(404)
     }
+    books.splice(bookIndex, 1)
+    res.sendStatus(204)
+
+    // const isbn = req.params.isbn;
+    // const bookIndex = books.findIndex((book) => book.isbn === parseInt(isbn));
+
+    // if (bookIndex !== -1) {
+    //     const deletedBook = books.splice(bookIndex, 1);
+    //     res.json(deletedBook[0]);
+    // } else {
+    //     res.status(404).send("Book not found.");
+    // }
 });
 
 app.listen(port, () => {
