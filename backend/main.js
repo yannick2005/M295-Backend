@@ -13,7 +13,23 @@ let books = [
     { isbn: 3, title: "Casablanca", year: 123, author: "Some guy out of Morocco" },
     { isbn: 4, title: "A massive Michi", year: "69 BC", author: "The great Michi" },
     { isbn: 5, title: "The adventures of the Michi's", year: 2005, author: "The Michi's" },
-    { isbn: 6, title: "The car accident with a mobility car of a Michi", year: 2023, author: "The last survivor" }
+    { isbn: 6, title: "The car accident with a mobility car of a Michi", year: 2023, author: "The last survivor" },
+    { isbn: 7, title: "The fall of the Michi's", year: 1289, author: "The great Michi 3"},
+    { isbn: 8, title: "The rise of Michi's", year: 1100, author: "The great Michi"},
+    { isbn: 9, title: "The empire of the Michi's", year: 1200, author: "The great Michi 2"},
+    { isbn: 10, title: "The build of the great Wall of Michi's", year: 1269, author: "The great Michi 3"}
+]
+
+let lends = [
+    { id: 1, customerId: 1, isbn: 1, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 2, customerId: 2, isbn: 2, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 3, customerId: 3, isbn: 3, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 4, customerId: 4, isbn: 4, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 5, customerId: 5, isbn: 5, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 6, customerId: 4, isbn: 6, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 7, customerId: 6, isbn: 7, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 8, customerId: 1, isbn: 8, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 9, customerId: 2, isbn: 9, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
 ]
 
 app.get("/books", (req, res) => {
@@ -89,6 +105,34 @@ app.delete("/books/:isbn", (req, res) => {
         res.status(404).send("Book not found.");
     }
 });
+
+app.get("/lends", (req, res) => {
+    res.json(lends)
+})
+
+app.get("/lends/:id", (req, res) => {
+    const id = req.params.id;
+    const lend = lends.find((lend) => lend.id === parseInt(id));
+
+    if (lend) {
+        res.json(lend);
+    } else {
+        res.status(404).send("Lend not found.");
+    }
+})
+
+app.post("/lends", (req, res) => {
+    const newLend = req.body
+
+    newLend.push()
+    res.sendStatus(200)
+})
+
+app.patch("/lends/:id", (req, res) => {
+    const id = req.params.id
+    const lend = lends.find((lend) => lend.id === parseInt(id))
+})
+
 
 app.listen(port, () => {
     console.log("The app is running on port: " + port)
