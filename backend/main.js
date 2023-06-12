@@ -157,10 +157,10 @@ app.post('/lends', (req, res) => {
         isbn: lendData.isbn,
         borrowed_at: new Date().toLocaleDateString('de-CH'),
         returned_at: null,
-};
+    };
 
-lends.push(newLend);
-res.status(201).json(newLend);
+    lends.push(newLend);
+    res.status(201).json(newLend);
 });
 
 app.patch('/lends/:id', (req, res) => {
