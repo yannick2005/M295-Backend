@@ -20,6 +20,15 @@ let books = [
     { isbn: 10, title: "The build of the great Wall of Michi's", year: 1269, author: "The great Michi 3"}
 ]
 
+let customer = [
+    {id: 1, name: "Daniel", surname: "Boulter"},
+    {id: 2, name: "Yannick", surname: "Schönhaar"},
+    {id: 3, name: "Michi", surname: "Michilia"},
+    {id: 4, name: "Matas", surname: "Radziukynas"},
+    {id: 5, name: "Just", surname: "Don't"},
+    {id: 6, name: "Someone", surname: "Nobdoy"}
+]
+
 let lends = [
     { id: 1, customerId: 1, isbn: 1, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
     { id: 2, customerId: 2, isbn: 2, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
@@ -122,17 +131,28 @@ app.get("/lends/:id", (req, res) => {
 })
 
 app.post("/lends", (req, res) => {
-    const newLend = req.body
+    const newLend = {
+        ...req.body,
+        borrowedAt: new Date()
+    };
 
-    newLend.push()
-    res.sendStatus(200)
+    lends.push(newLend)
+    res.sendStatus(201).json(newLend)
 })
 
 app.patch("/lends/:id", (req, res) => {
-    const id = req.params.id
-    const lend = lends.find((lend) => lend.id === parseInt(id))
-})
+    const id = req.params.id;
+    const lendIndex = lends.findIndex((lend) => lend.id === parseInt(id));
 
+    if (lendIndex === -1) {
+        return res.status(404).json({ error: "Lend not found" });
+    }
+
+    const updatedLend = { ...lends[lendIndex], ...req.body, /*returnedAt: new Date()*/};
+    lends[lendIndex] = updatedLend;
+
+    res.status(200).json(updatedLend);
+});
 
 app.listen(port, () => {
     console.log("The app is running on port: " + port)
