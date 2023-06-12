@@ -59,12 +59,8 @@ app.get("/books/:isbn", (req, res) => {
 app.post("/books", (req, res) => {
     const newBook = req.body;
 
-    if (isValid(newBook)){
-        books.push(newBook);
-        res.status(201).json(newBook);
-    } else {
-        res.status(301).send("Something went wrong")
-    }
+    books.push(newBook);
+    res.status(201).json(newBook);
 
     // function isValid(book){
     //     return book.isbn =  
