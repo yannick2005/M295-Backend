@@ -30,15 +30,15 @@ let customer = [
 ]
 
 let lends = [
-    { id: 1, customerId: 1, isbn: 1, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 2, customerId: 2, isbn: 2, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 3, customerId: 3, isbn: 3, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 4, customerId: 4, isbn: 4, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 5, customerId: 5, isbn: 5, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 6, customerId: 4, isbn: 6, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 7, customerId: 6, isbn: 7, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 8, customerId: 1, isbn: 8, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
-    { id: 9, customerId: 2, isbn: 9, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: "Not returned yet"},
+    { id: 1, customerId: 1, isbn: 1, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 2, customerId: 2, isbn: 2, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 3, customerId: 3, isbn: 3, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 4, customerId: 4, isbn: 4, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 5, customerId: 5, isbn: 5, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 6, customerId: 4, isbn: 6, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 7, customerId: 6, isbn: 7, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 8, customerId: 1, isbn: 8, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
+    { id: 9, customerId: 2, isbn: 9, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
 ]
 
 app.get("/books", (req, res) => {
@@ -127,54 +127,97 @@ app.get("/lends/:id", (req, res) => {
 })
 
 app.post('/lends', (req, res) => {
-    const lendData = req.body;
-    const book = books.find((b) => b.isbn === lendData.isbn);
+    const newLend = req.body;
+    newLend.id = lends.length + 1
+    newLend.borrowedAt = new Date().toLocaleDateString('de-CH')
+    newLend.returnedAt = null
 
-    if (!book) {
-        res.status(404).json({ error: 'Book not found' });
-        return;
-    }
+    if(isValid(newLend))
+        return res.sendStatus()
 
-    const isBookAlreadyLent = lends.some((l) => l.isbn === lendData.isbn && !l.returned_at);
-    if (isBookAlreadyLent) {
-        res.status(422).json({ error: 'The book is already borrowed' });
-        return;
-    }
+    lends.push(newLend)
+    res.json(newLend)
+    // const book = books.find((b) => b.isbn === lendData.isbn);
 
-    const customerLendsCount = lends.filter((l) => l.customer_id === lendData.customer_id && !l.returned_at).length;
-    if (customerLendsCount >= 3) {
-        res.status(422).json({ error: 'The customer already has 3 borrowed books' });
-        return;
-    }
+    // if (!book) {
+    //     res.status(404).json({ error: 'Book not found' });
+    //     return;
+    // }
 
-    const newLend = {
-        id: lends.length + 1,
-        customer_id: lendData.customer_id,
-        isbn: lendData.isbn,
-        borrowed_at: new Date().toLocaleDateString('de-CH'),
-        returned_at: null,
-    };
+    // const isBookAlreadyLent = lends.some((l) => l.isbn === lendData.isbn && !l.returned_at);
+    // if (isBookAlreadyLent) {
+    //     res.status(422).json({ error: 'The book is already borrowed' });
+    //     return;
+    // }
 
-    lends.push(newLend);
-    res.status(201).json(newLend);
+    // const customerLendsCount = lends.filter((l) => l.customer_id === lendData.customer_id && !l.returned_at).length;
+    // if (customerLendsCount >= 3) {
+    //     res.status(422).json({ error: 'The customer already has 3 borrowed books' });
+    //     return;
+    // }
+
+    // const newLend = {
+    //     id: lends.length + 1,
+    //     customer_id: lendData.customer_id,
+    //     isbn: lendData.isbn,
+    //     borrowed_at: new Date().toLocaleDateString('de-CH'),
+    //     returned_at: null,
+    // };
+
+    // lends.push(newLend);
+    // res.status(201).json(newLend);
 });
+
 
 app.patch('/lends/:id', (req, res) => {
-    const lendId = req.params.id;
-    const lendUpdates = req.body;
-    const lend = lends.find((l) => l.id === parseInt(lendId));
+    const lendIndex = lends.findIndex(lend => lend.id === req.params.id)
 
-    if (!lend) {
-        res.status(404).json({ error: 'Lend not found' });
-        return;
-    }
+    if (lendIndex < 0)
+        res.sendStatus(404)
 
-    lend.customer_id = lendUpdates.customer_id || lend.customer_id;
-    lend.isbn = lendUpdates.isbn || lend.isbn;
-    lend.returned_at = lendUpdates.returned_at || lend.returned_at;
+    const updatedParams = (({isbn, customerId, returnedAt}) => ({isbn, customerId, returnedAt}))(request.body)
+    const updatedLend = { ...lends[lendIndex], ...request.body }
 
-    res.json(lend);
+    console.log(updatedLend)
+
+    if (isValid(updatedLend)) return res.sendStatus(422)
+
+    lends.splice(lendIndex, 1, updatedLend)
+    res.json(updatedLend)
+
+    // const lendId = req.params.id;
+    // const lendUpdates = req.body;
+    // const lend = lends.find((l) => l.id === parseInt(lendId));
+    
+    // if (!lend) {
+    //     res.status(404).json({ error: 'Lend not found' });
+    //     return;
+    // }
+
+    // lend.customer_id = lendUpdates.customer_id || lend.customer_id;
+    // lend.isbn = lendUpdates.isbn || lend.isbn;
+    // lend.returned_at = lendUpdates.returned_at || lend.returned_at;
+
+    // res.json(lend);
 });
+
+function isValid(lend){
+    return lend.isbn != undefined && lend.isbn != "" &&
+    lend.customerId != undefined && lend.customerId != "" &&
+    lend.borrowedAt != undefined && lend.borrowedAt != "" &&
+    lend.returnedAt == null || Date.parse(lend.returnedAt != NaN)
+}
+
+// function isLendAble() {
+//     let customerLend = 0
+//     let booksLends = 0
+
+//     lends.forEach.otherLend => {
+//         if(lend.isbn == otherLend.isbn && otherLend.returnedAt == null)
+//     }
+
+//     return costumerLends <= 3 && bookLends < 1
+// }
 
 app.listen(port, () => {
     console.log(
