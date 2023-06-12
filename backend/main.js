@@ -177,5 +177,7 @@ app.patch('/lends/:id', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("The app is running on port: " + port)
+    console.log(
+        "The app is running on port: " + port, 
+        `\nYou can open your browser on: http://localhost:${port}`)
 })
