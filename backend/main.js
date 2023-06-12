@@ -130,28 +130,54 @@ app.get("/lends/:id", (req, res) => {
     }
 })
 
-app.post("/lends", (req, res) => {
-    const newLend = {
-        ...req.body,
-        borrowedAt: new Date()
-    };
+app.post('/lends', (req, res) => {
+    const lendData = req.body;
+    const book = books.find((b) => b.isbn === lendData.isbn);
 
-    lends.push(newLend)
-    res.sendStatus(201).json(newLend)
-})
-
-app.patch("/lends/:id", (req, res) => {
-    const id = req.params.id;
-    const lendIndex = lends.findIndex((lend) => lend.id === parseInt(id));
-
-    if (lendIndex === -1) {
-        return res.status(404).json({ error: "Lend not found" });
+    if (!book) {
+        res.status(404).json({ error: 'Book not found' });
+        return;
     }
 
-    const updatedLend = { ...lends[lendIndex], ...req.body, /*returnedAt: new Date()*/};
-    lends[lendIndex] = updatedLend;
+    const isBookAlreadyLent = lends.some((l) => l.isbn === lendData.isbn && !l.returned_at);
+    if (isBookAlreadyLent) {
+        res.status(422).json({ error: 'The book is already borrowed' });
+        return;
+    }
 
-    res.status(200).json(updatedLend);
+    const customerLendsCount = lends.filter((l) => l.customer_id === lendData.customer_id && !l.returned_at).length;
+    if (customerLendsCount >= 3) {
+        res.status(422).json({ error: 'The customer already has 3 borrowed books' });
+        return;
+    }
+
+    const newLend = {
+        id: lends.length + 1,
+        customer_id: lendData.customer_id,
+        isbn: lendData.isbn,
+        borrowed_at: new Date().toLocaleDateString('de-CH'),
+        returned_at: null,
+};
+
+lends.push(newLend);
+res.status(201).json(newLend);
+});
+
+app.patch('/lends/:id', (req, res) => {
+    const lendId = req.params.id;
+    const lendUpdates = req.body;
+    const lend = lends.find((l) => l.id === parseInt(lendId));
+
+    if (!lend) {
+        res.status(404).json({ error: 'Lend not found' });
+        return;
+    }
+
+    lend.customer_id = lendUpdates.customer_id || lend.customer_id;
+    lend.isbn = lendUpdates.isbn || lend.isbn;
+    lend.returned_at = lendUpdates.returned_at || lend.returned_at;
+
+    res.json(lend);
 });
 
 app.listen(port, () => {
