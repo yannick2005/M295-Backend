@@ -28,7 +28,7 @@ app.get("/name", (req, res) => {
 
 app.delete("/name", (req, res) => {
     delete req.session.name
-    res.sendStatus(204)
+    res.send("Successfully deleted").status(204)
 })
 
 app.get('/', function (request, response, _) {
