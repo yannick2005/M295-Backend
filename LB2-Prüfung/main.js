@@ -18,12 +18,12 @@ app.use(
 );
 
 // Application sided
-const secretAdminCredentials = {password: "m295"}
+const secretPassword = {password: "m295"}
 
 const tasks = [
-  {id: 1, title: "Do laundry", description: "The laundry should be clean every day", due: "", done: false},
-  {id: 2, title: "Do the dishes", description: "The table should be dished", due: "", done: false},
-  {id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "", done: true}
+  {id: 1, title: "Do laundry", description: "The laundry should be clean every day", due: "2023-06-15", done: false},
+  {id: 2, title: "Do the dishes", description: "The table should be dished", due: "2023-06-20", done: false},
+  {id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "2023-08-10", done: true}
 ];
 
 function isAuthenticated(req, res, next){
@@ -32,18 +32,18 @@ function isAuthenticated(req, res, next){
   else {
      res.status(401).json({error: "Not logged in"})
   }
-}
+} // from Diego Steiner
 
 function isValid(task){
   return task.title != undefined && task.title != "" &&
   task.due != undefined && task.due != "";
 };
 
-app.get("/tasks", isAuthenticated,function (req, res) {
+app.get("/tasks", function (req, res) {
   res.json(tasks);
 });
 
-app.post("/tasks", isAuthenticated,function (req, res) {
+app.post("/tasks", function (req, res) {
   const newTask = req.body;
 
   if (isValid(newTask)){
@@ -53,7 +53,7 @@ app.post("/tasks", isAuthenticated,function (req, res) {
   return res.sendStatus(422)
 });
 
-app.get("/tasks/:id", isAuthenticated, (req, res) => {
+app.get("/tasks/:id", (req, res) => {
   const id = req.params.id;
   const task = tasks.find((task) => task.id === parseInt(id));
 
@@ -64,7 +64,7 @@ app.get("/tasks/:id", isAuthenticated, (req, res) => {
   }
 });
 
-app.put("/tasks/:id", isAuthenticated, function (req, res) {
+app.put("/tasks/:id", function (req, res) {
   const id = req.params.id;
   const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
 
@@ -76,7 +76,7 @@ app.put("/tasks/:id", isAuthenticated, function (req, res) {
   }
 });
 
-app.delete("/tasks/:id", isAuthenticated, function (req, res) {
+app.delete("/tasks/:id", function (req, res) {
   const id = req.params.id;
     const task = tasks.find((task) => task.id === parseInt(id));
 
@@ -89,10 +89,10 @@ app.delete("/tasks/:id", isAuthenticated, function (req, res) {
 });
 
 // authorization
-app.post("/login", isAuthenticated, function(req, res) {
+app.post("/login", function(req, res) {
   const {email, password} = req.body
 
-    if (email != undefined || email != "" && password === secretAdminCredentials.password){
+    if (email != undefined || email != "" && password === secretPassword.password){
         req.session.authenticated = true
         req.session.email = email
         res.status(200).json({email: req.session.email})
@@ -115,9 +115,9 @@ app.delete("/logout", function(req, res) {
     delete req.session.email
     res.send("Successfully logged out").status(204)
   } else {
-    res.send("Your already logged out")
+    res.send("You're already logged out")
   }
-})
+}) // most part of authorization from Diego Steiner
 
 
 app.listen(
