@@ -17,20 +17,20 @@ app.use(
   })
 );
 
-// Error handling
-app.use((req, res, next) => {
-  const error = new Error("Endpoint doesn't exist");
-  error.status = 404;
-  next(error);
-});
+// Not existing endpoints
+// app.use((req, res, next) => {
+//   const error = new Error("Endpoint doesn't exist");
+//   error.status = 404;
+//   next(error);
+// });
 
-app.use((req, res, next, error) => {
-  res.status(error.status || 500).json({
-    error: {
-      message: error.message,
-    },
-  });
-});
+// app.use((error, req, res, next) => {
+//   res.status(error.status || 500).json({
+//     error: {
+//       message: error.message,
+//     },
+//   });
+// });
 
 // Application sided
 const secretPassword = {password: "m295"}
@@ -47,10 +47,11 @@ function isAuthenticated(req, res, next){
   else {
      res.status(403).json({error: "Not logged in"})
   }
-} // from Diego Steiner
+}
 
 function isValid(task){
   return task.title != undefined && task.title != "" &&
+  task.description != undefined && task.description != "" &&
   task.due != undefined && task.due != "";
 };
 
@@ -64,7 +65,7 @@ app.post("/tasks", isAuthenticated, function (req, res) {
     title: req.body.title,
     description: req.body.description,
     due: req.body.due,
-    done: req.body.done
+    done: false
   };
 
   if (isValid(newTask)){
@@ -114,7 +115,7 @@ app.delete("/tasks/:id", isAuthenticated, function (req, res) {
 app.post("/login", function(req, res) {
   const {email, password} = req.body
 
-    if (email != undefined || email != "" && password === secretPassword.password){
+    if (email != undefined && email.includes("@") || email != "" && email.includes("@") && password === secretPassword.password){
         req.session.authenticated = true
         req.session.email = email
         res.status(200).json({email: req.session.email})
@@ -139,10 +140,21 @@ app.delete("/logout", function(req, res) {
   } else {
     res.send("You're already logged out")
   }
-}) // most part of authorization from Diego Steiner
-
+})
 
 app.listen(
     port, 
     console.log(`Listening on port ${port}`)
 )
+
+// automated tests
+function testing(){
+  const task = {
+    title: "ds", description: "get some information", due: "2023-09-10"
+  }
+
+  if(isValid(task))
+    return console.log("Test passed")
+  return console.log("Something went wrong")
+}
+testing()
