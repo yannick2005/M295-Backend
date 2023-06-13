@@ -30,5 +30,6 @@ DELETE `/logout`, um sich auszuloggen. <br>
 Ohne sich einzuloggen kann man keine der oben genannten Endpunkte von Tasks abfragen.
 
 Mehr Informationen finden Sie hier: [Swagger description](./swagger-description.yaml) <br>
+Mein Github Repository: [Github](https://github.com/yannick2005/M295-Backend) <br>
 <br>
 <b>Written by:</b> <i>Yannick Schönhaar</i>
