@@ -181,7 +181,6 @@ app.post('/lends', (req, res) => {
     // res.status(201).json(newLend);
 });
 
-
 app.patch('/lends/:id', (req, res) => {
     const lendIndex = lends.findIndex(lend => lend.id === req.params.id)
 
@@ -214,7 +213,6 @@ app.patch('/lends/:id', (req, res) => {
     // res.json(lend);
 });
 
-
 app.post("/login", (req, res) =>{
     const email = req.query.email;
     const password = req.query.password;
@@ -236,7 +234,6 @@ app.delete("/logout", (req, res) => {
     req.session.email = null;
     res.sendStatus(204);
 })
-
 
 function isValid(lend){
     return lend.isbn != undefined && lend.isbn != "" &&
