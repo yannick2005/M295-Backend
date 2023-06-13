@@ -17,6 +17,21 @@ app.use(
   })
 );
 
+// Error handling
+app.use((req, res, next) => {
+  const error = new Error("Endpoint doesn't exist");
+  error.status = 404;
+  next(error);
+});
+
+app.use((req, res, next, error) => {
+  res.status(error.status || 500).json({
+    error: {
+      message: error.message,
+    },
+  });
+});
+
 // Application sided
 const secretPassword = {password: "m295"}
 
@@ -30,7 +45,7 @@ function isAuthenticated(req, res, next){
   if (req.session.authenticated)
       next()
   else {
-     res.status(401).json({error: "Not logged in"})
+     res.status(403).json({error: "Not logged in"})
   }
 } // from Diego Steiner
 
@@ -39,32 +54,39 @@ function isValid(task){
   task.due != undefined && task.due != "";
 };
 
-app.get("/tasks", function (req, res) {
-  res.json(tasks);
+app.get("/tasks", isAuthenticated, function (req, res) {
+  res.json(tasks).status(200);
 });
 
-app.post("/tasks", function (req, res) {
-  const newTask = req.body;
+app.post("/tasks", isAuthenticated, function (req, res) {
+  const newTask = {
+    id: tasks.length + 1,
+    title: req.body.title,
+    description: req.body.description,
+    due: req.body.due,
+    done: req.body.done
+  };
 
   if (isValid(newTask)){
     tasks.push(newTask);
-    return res.status(201).json(newTask);
+    res.status(201).json(newTask);
+  } else {
+    res.sendStatus(422)
   }
-  return res.sendStatus(422)
 });
 
-app.get("/tasks/:id", (req, res) => {
+app.get("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
   const task = tasks.find((task) => task.id === parseInt(id));
 
   if (task){
-    res.json(task);
+    res.json(task).status(200);
   } else {
     res.status(404).send("Task not found. Try another id");
   }
 });
 
-app.put("/tasks/:id", function (req, res) {
+app.put("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
   const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
 
@@ -72,19 +94,19 @@ app.put("/tasks/:id", function (req, res) {
     tasks[taskIndex] = { ...tasks[taskIndex], ...req.body };
     res.status(201).json(tasks[taskIndex]);
   } else {
-    res.status(404).send("Task not found.");
+    res.status(404).send("Task not found. Try another id");
   }
 });
 
-app.delete("/tasks/:id", function (req, res) {
+app.delete("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
     const task = tasks.find((task) => task.id === parseInt(id));
 
     if (task !== -1) {
         const deletedTask = tasks.splice(task, 1);
-        res.json(deletedTask[0]);
+        res.json(deletedTask[0]).status(204);
     } else {
-        res.status(404).send("Task not found.");
+        res.status(404).send("Task not found. Try");
     }
 });
 
