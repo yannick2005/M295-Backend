@@ -25,6 +25,6 @@ DELETE `/logout`, um sich auszuloggen.
 
 Ohne sich einzuloggen kann man keine der oben genannten Endpunkte abfragen.
 
-You can find more information here: [Swagger description](./swagger-description.yaml)
+Mehr informationen finden Sie hier: [Swagger description](./swagger-description.yaml)
 
 Written by: Yannick Schönhaar
