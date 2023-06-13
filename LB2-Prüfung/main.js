@@ -26,16 +26,24 @@ const tasks = [
   {id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "", done: true}
 ];
 
+function isAuthenticated(req, res, next){
+  if (req.session.authenticated)
+      next()
+  else {
+     res.status(401).json({error: "Not logged in"})
+  }
+}
+
 function isValid(task){
   return task.title != undefined && task.title != "" &&
   task.due != undefined && task.due != "";
 };
 
-app.get("/tasks", function (req, res) {
+app.get("/tasks", isAuthenticated,function (req, res) {
   res.json(tasks);
 });
 
-app.post("/tasks", function (req, res) {
+app.post("/tasks", isAuthenticated,function (req, res) {
   const newTask = req.body;
 
   if (isValid(newTask)){
@@ -45,7 +53,7 @@ app.post("/tasks", function (req, res) {
   return res.sendStatus(422)
 });
 
-app.get("/tasks/:id", (req, res) => {
+app.get("/tasks/:id", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const task = tasks.find((task) => task.id === parseInt(id));
 
@@ -56,7 +64,7 @@ app.get("/tasks/:id", (req, res) => {
   }
 });
 
-app.put("/tasks/:id", function (req, res) {
+app.put("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
   const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
 
@@ -68,7 +76,7 @@ app.put("/tasks/:id", function (req, res) {
   }
 });
 
-app.delete("/tasks/:id", function (req, res) {
+app.delete("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
     const task = tasks.find((task) => task.id === parseInt(id));
 
@@ -81,7 +89,7 @@ app.delete("/tasks/:id", function (req, res) {
 });
 
 // authorization
-app.post("/login", function(req, res) {
+app.post("/login", isAuthenticated, function(req, res) {
   const {email, password} = req.body
 
     if (email != undefined || email != "" && password === secretAdminCredentials.password){
