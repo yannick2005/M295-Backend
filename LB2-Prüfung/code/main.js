@@ -18,26 +18,26 @@ app.use(
 );
 
 // Application sided
-const secretPassword = {password: "m295"}
+const secretPassword = { password: "m295" }
 
 const tasks = [
-  {id: 1, title: "Do laundry", description: "The laundry should be clean every day", due: "2023-06-15", done: false},
-  {id: 2, title: "Do the dishes", description: "The table should be dished", due: "2023-06-20", done: false},
-  {id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "2023-08-10", done: true}
+  { id: 1, title: "Do laundry", description: "The laundry should be clean every day", due: "2023-06-15", done: false },
+  { id: 2, title: "Do the dishes", description: "The table should be dished", due: "2023-06-20", done: false },
+  { id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "2023-08-10", done: true }
 ];
 
-function isAuthenticated(req, res, next){
+function isAuthenticated(req, res, next) {
   if (req.session.authenticated)
-      next()
+    next()
   else {
-     res.status(403).json({error: "Not logged in"})
+    res.status(403).json({ error: "Not logged in" })
   }
 }
 
-function isValid(task){
+function isValid(task) {
   return task.title != undefined && task.title != "" &&
-  task.description != undefined && task.description != "" &&
-  task.due != undefined && task.due != "";
+    task.description != undefined && task.description != "" &&
+    task.due != undefined && task.due != "";
 };
 
 app.get("/tasks", isAuthenticated, function (req, res) {
@@ -52,10 +52,10 @@ app.post("/tasks", isAuthenticated, function (req, res) {
     due: req.body.due,
     done: false
   };
-  if (!newTask.title){
-    return res.status(406).json({error: "Title should not be empty"})
+  if (!newTask.title) {
+    return res.status(406).json({ error: "Title should not be empty" })
   }
-  else if (isValid(newTask)){
+  else if (isValid(newTask)) {
     tasks.push(newTask);
     res.status(201).json(newTask);
   } else {
@@ -67,7 +67,7 @@ app.get("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
   const task = tasks.find((task) => task.id === parseInt(id));
 
-  if (task){
+  if (task) {
     res.json(task).status(200);
   } else {
     res.status(404).send("Task not found. Try another id");
@@ -88,39 +88,39 @@ app.put("/tasks/:id", isAuthenticated, function (req, res) {
 
 app.delete("/tasks/:id", isAuthenticated, function (req, res) {
   const id = req.params.id;
-    const task = tasks.find((task) => task.id === parseInt(id));
+  const task = tasks.find((task) => task.id === parseInt(id));
 
-    if (task !== -1) {
-        const deletedTask = tasks.splice(task, 1);
-        res.json(deletedTask[0]).status(204);
-    } else {
-        res.status(404).send("Task not found. Try another id");
-    }
-});
-
-// authorization
-app.post("/login", function(req, res) {
-  const {email, password} = req.body
-
-    if (email != undefined && email.includes("@") && email.includes(".") || email != "" && email.includes("@") && email.includes(".") && password === secretPassword.password){ // Doesn't work for some reason when not applying two times.
-        req.session.authenticated = true
-        req.session.email = email
-        res.status(200).json({email: req.session.email})
-    } else {
-      res.status(401).json({error: "Invalid Credentials"})
-    }
-});
-
-app.get("/verify", function(req,  res) {
-  if (req.session.authenticated){
-    res.status(200).json({email: req.session.email})
+  if (task !== -1) {
+    const deletedTask = tasks.splice(task, 1);
+    res.json(deletedTask[0]).status(204);
   } else {
-    res.status(401).json({error: "Not logged in"})
+    res.status(404).send("Task not found. Try another id");
   }
 });
 
-app.delete("/logout", function(req, res) {
-  if(req.session.email){
+// authorization
+app.post("/login", function (req, res) {
+  const { email, password } = req.body
+
+  if (email != undefined && email.includes("@") && email.includes(".") || email != "" && email.includes("@") && email.includes(".") && password === secretPassword.password) { // Doesn't work for some reason when not applying two times.
+    req.session.authenticated = true
+    req.session.email = email
+    res.status(200).json({ email: req.session.email })
+  } else {
+    res.status(401).json({ error: "Invalid Credentials" })
+  }
+});
+
+app.get("/verify", function (req, res) {
+  if (req.session.authenticated) {
+    res.status(200).json({ email: req.session.email })
+  } else {
+    res.status(401).json({ error: "Not logged in" })
+  }
+});
+
+app.delete("/logout", function (req, res) {
+  if (req.session.email) {
     req.session.authenticated = false
     delete req.session.email
     res.send("Successfully logged out").status(204)
@@ -130,17 +130,17 @@ app.delete("/logout", function(req, res) {
 })
 
 // Not existing endpoints
-app.use(function (req, res){
-  res.status(404).json({error: "Endpoint doesn't exist"})
+app.use(function (req, res) {
+  res.status(404).json({ error: "Endpoint doesn't exist" })
 })
 
 app.listen(
-    port, 
-    console.log(`Listening on port ${port}`)
+  port,
+  console.log(`Listening on port ${port}`)
 )
 
 // automated tests
-function testing(){
+function testing() {
   const task = {
     title: "ds", description: "get some information", due: "2023-09-10"
   }
