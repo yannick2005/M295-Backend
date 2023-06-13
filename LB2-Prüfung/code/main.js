@@ -103,7 +103,7 @@ app.delete("/tasks/:id", isAuthenticated, function (req, res) {
 app.post("/login", function (req, res) {
   const { email, password } = req.body
 
-  if (email != undefined && email.includes("@") && email.includes(".") || email != "" && email.includes("@") && email.includes(".") && password === secretPassword.password) { // Doesn't work for some reason when not applying two times.
+  if (!email && !email.includes("@") && !email.includes(".") && password === secretPassword.password) { // Doesn't work for some reason when not applying two times.
     req.session.authenticated = true
     req.session.email = email
     res.status(200).json({ email: req.session.email })
