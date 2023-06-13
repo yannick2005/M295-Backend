@@ -145,8 +145,10 @@ function testing(){
     title: "ds", description: "get some information", due: "2023-09-10"
   }
 
-  if(isValid(task))
-    return console.log("Test passed")
-  return console.log("Something went wrong")
+  if (isValid(task)) {
+    console.log("Test passed")
+  } else {
+    console.log("Something went wrong")
+  }
 }
 testing()
