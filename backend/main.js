@@ -2,10 +2,23 @@
 
 // const bodyParser = require("body-parser")
 const express = require("express")
+const session = require("express-session")
 const app = express()
 const port = 3000
 
 app.use(express.json())
+
+app.use(
+  session({
+    secret: "mysecretkey",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+const validEmail = "desk@library.example";
+const validPassword = "m295";
+
 
 let books = [
     { isbn: 1, title: "Harry Potter", year: 9812, author: "A kid" },
@@ -20,14 +33,14 @@ let books = [
     { isbn: 10, title: "The build of the great Wall of Michi's", year: 1269, author: "The great Michi 3"}
 ]
 
-let customer = [
-    {id: 1, name: "Daniel", surname: "Boulter"},
-    {id: 2, name: "Yannick", surname: "Schönhaar"},
-    {id: 3, name: "Michi", surname: "Michilia"},
-    {id: 4, name: "Matas", surname: "Radziukynas"},
-    {id: 5, name: "Just", surname: "Don't"},
-    {id: 6, name: "Someone", surname: "Nobdoy"}
-]
+// let customer = [
+//     {id: 1, name: "Daniel", surname: "Boulter"},
+//     {id: 2, name: "Yannick", surname: "Schönhaar"},
+//     {id: 3, name: "Michi", surname: "Michilia"},
+//     {id: 4, name: "Matas", surname: "Radziukynas"},
+//     {id: 5, name: "Just", surname: "Don't"},
+//     {id: 6, name: "Someone", surname: "Nobdoy"}
+// ]
 
 let lends = [
     { id: 1, customerId: 1, isbn: 1, borrowedAt: new Date().toLocaleDateString('de-CH'), returnedAt: null},
@@ -200,6 +213,30 @@ app.patch('/lends/:id', (req, res) => {
 
     // res.json(lend);
 });
+
+
+app.post("/login", (req, res) =>{
+    const email = req.query.email;
+    const password = req.query.password;
+
+    if (email === validEmail && password === validPassword) {
+        req.session.authenticated = true;
+        res.status(201).json({ email });
+    } else {
+        res.sendStatus(401);
+    }
+})
+
+app.get("/verify", (req, res) => {
+    res.status(200).json({ email: req.session.email });
+})
+
+app.delete("/logout", (req, res) => {
+    req.session.authenticated = false;
+    req.session.email = null;
+    res.sendStatus(204);
+})
+
 
 function isValid(lend){
     return lend.isbn != undefined && lend.isbn != "" &&
