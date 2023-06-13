@@ -94,7 +94,7 @@ app.delete("/tasks/:id", isAuthenticated, function (req, res) {
         const deletedTask = tasks.splice(task, 1);
         res.json(deletedTask[0]).status(204);
     } else {
-        res.status(404).send("Task not found. Try");
+        res.status(404).send("Task not found. Try another id");
     }
 });
 
