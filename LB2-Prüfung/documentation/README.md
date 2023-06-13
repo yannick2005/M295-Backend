@@ -1,5 +1,9 @@
 # LB2 - Prüfung M295
 
+## Installation
+Um die App starten zu können brauch man express um dies herunterzuladen benötigen sie folgendes kommando: `npm install --save express` <br>
+Da wir auch mit session arbeiten muss noch zusätzlich dieses Kommando ausgeführt werden: `npm install --save express-session`
+
 ## Endpunkte
 Es gibt insgesamt 5 Endpunkte bezügliche den Tasks: <br>
     GET `/tasks` <br>
