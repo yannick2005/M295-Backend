@@ -24,7 +24,7 @@ const tasks = [
   { id: 1, title: "Do laundry", description: "The laundry should be clean every day", due: "2023-06-15", done: false },
   { id: 2, title: "Do the dishes", description: "The table should be dished", due: "2023-06-20", done: false },
   { id: 3, title: "Pack suitcase", description: "The suitcase must contain the most relevant items", due: "2023-08-10", done: true }
-];
+]; // Would have done it with new Set(), later but had too less time to change it again
 
 function isAuthenticated(req, res, next) {
   if (req.session.authenticated)
