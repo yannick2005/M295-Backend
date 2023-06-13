@@ -22,3 +22,7 @@ DELETE `/tasks/{id}`, wird verwendet um ein Task zu löschen.
 GET `/verify`, anzeigen zu lassen ob man eingeloggt ist oder nicht.
 POST `/login`, um sich einloggen zu können.
 DELETE `/logout`, um sich auszuloggen.
+
+You can find more information here: [Swagger description](./swagger-description.yaml)
+
+Written by: Yannick Schönhaar
