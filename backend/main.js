@@ -214,7 +214,7 @@ const secretAdminCredentials = { email: "desk@library.example", password: "m295"
 app.post("/login", function (req, res) {
     const {email, password} = req.body
 
-    if (email.toLowerCase() === secretAdminCredentials.email && password === secretAdminCredentials.password){
+    if (email?.toLowerCase() === secretAdminCredentials.email && password === secretAdminCredentials.password){
         req.session.authenticated = true
         req.session.email = email
         return res.status(200).json({email: req.session.email})
