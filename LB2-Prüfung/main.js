@@ -52,7 +52,7 @@ app.post("/tasks", isAuthenticated, function (req, res) {
     due: req.body.due,
     done: false
   };
-  if (!title){
+  if (!newTask.title){
     return res.status(406).json({error: "Title should not be empty"})
   }
   else if (isValid(newTask)){
