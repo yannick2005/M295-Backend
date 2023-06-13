@@ -17,21 +17,6 @@ app.use(
   })
 );
 
-// Not existing endpoints
-// app.use((req, res, next) => {
-//   const error = new Error("Endpoint doesn't exist");
-//   error.status = 404;
-//   next(error);
-// });
-
-// app.use((error, req, res, next) => {
-//   res.status(error.status || 500).json({
-//     error: {
-//       message: error.message,
-//     },
-//   });
-// });
-
 // Application sided
 const secretPassword = {password: "m295"}
 
@@ -140,6 +125,11 @@ app.delete("/logout", function(req, res) {
   } else {
     res.send("You're already logged out")
   }
+})
+
+// Not existing endpoints
+app.use(function (req, res){
+  res.status(404).json({error: "Endpoint doesn't exist"})
 })
 
 app.listen(
